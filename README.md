@@ -70,6 +70,15 @@ Application logs are written to `logs/trading_bot.log` using a rotating file han
 - `LIMIT` orders require `--price`.
 - Verify the Binance Futures Testnet endpoint if connectivity errors occur.
 
+## Problems Faced
+
+While building this project, a few small issues came up:
+
+- I first had to make sure the bot could read values from `.env` without exposing secrets in the code. I solved this by loading everything through a config module and keeping credentials out of the source files.
+- Input handling needed to be strict but still friendly. I solved this by adding validation for symbol, side, order type, quantity, and price, so users get clear error messages instead of cryptic failures.
+- Binance API responses were not always easy to present cleanly in the terminal. I handled this by formatting the response into a simple order summary before printing it.
+- Logging had to stay useful without becoming messy. I solved this by using a rotating log file so the app keeps a proper history without creating huge log files.
+
 ## Project Structure
 
 ```text
