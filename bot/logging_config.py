@@ -20,7 +20,7 @@ LOG_FORMAT: Final[str] = (
 DATE_FORMAT: Final[str] = "%Y-%m-%d %H:%M:%S"
 
 
-def _build_file_handler(log_file: Path) -> RotatingFileHandler:
+def _build_file_handler(log_file: Path, level: int) -> RotatingFileHandler:
     """Create the rotating file handler used by the application."""
 
     log_file.parent.mkdir(parents=True, exist_ok=True)
@@ -31,16 +31,16 @@ def _build_file_handler(log_file: Path) -> RotatingFileHandler:
         backupCount=BACKUP_COUNT,
         encoding="utf-8",
     )
-    handler.setLevel(DEFAULT_LOG_LEVEL)
+    handler.setLevel(level)
     handler.setFormatter(logging.Formatter(LOG_FORMAT, datefmt=DATE_FORMAT))
     return handler
 
 
-def _build_stream_handler() -> logging.Handler:
+def _build_stream_handler(level: int) -> logging.Handler:
     """Create the console handler for operational visibility."""
 
     handler = logging.StreamHandler()
-    handler.setLevel(DEFAULT_LOG_LEVEL)
+    handler.setLevel(level)
     handler.setFormatter(logging.Formatter(LOG_FORMAT, datefmt=DATE_FORMAT))
     return handler
 
@@ -61,12 +61,13 @@ def get_logger(
     logger = logging.getLogger(logger_name)
 
     if logger.handlers:
+        logger.setLevel(level)
         return logger
 
     logger.setLevel(level)
     logger.propagate = False
 
-    logger.addHandler(_build_file_handler(log_file))
-    logger.addHandler(_build_stream_handler())
+    logger.addHandler(_build_file_handler(log_file, level))
+    logger.addHandler(_build_stream_handler(level))
 
     return logger

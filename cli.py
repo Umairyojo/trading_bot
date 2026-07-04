@@ -8,9 +8,10 @@ import sys
 from typing import Sequence
 
 from bot.logging_config import get_logger
-from bot.orders import OrderPlacementError, OrderService, OrderServiceError
+from bot.orders import OrderPlacementError, OrderResult, OrderService, OrderServiceError
 from bot.validators import (
     ValidationError,
+    PriceValidationError,
     validate_limit_price,
     validate_order_type,
     validate_quantity,
@@ -83,7 +84,7 @@ def print_request_summary(
     print("=" * 32)
 
 
-def print_response_summary(result: object) -> None:
+def print_response_summary(result: OrderResult) -> None:
     """Display the formatted order response."""
 
     _print_header("ORDER RESPONSE")
@@ -96,7 +97,9 @@ def print_response_summary(result: object) -> None:
     print("=" * 32)
 
 
-def _validate_inputs(args: argparse.Namespace) -> tuple[str, str, str, float, float | None]:
+def _validate_inputs(
+    args: argparse.Namespace,
+) -> tuple[str, str, str, float, float | None]:
     """Validate and normalize CLI arguments."""
 
     symbol = validate_symbol(args.symbol)
@@ -121,7 +124,7 @@ def _execute_order(
     order_type: str,
     quantity: float,
     price: float | None,
-) -> object:
+) -> OrderResult:
     """Route the validated request to the correct order method."""
 
     if order_type == "MARKET":

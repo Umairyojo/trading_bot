@@ -10,9 +10,7 @@ from typing import Any, Mapping
 from bot.client import (
     BinanceFuturesClient,
     TradingBotClientError,
-    TradingBotConnectivityError,
     TradingBotInitializationError,
-    TradingBotRequestError,
 )
 from bot.logging_config import get_logger
 from bot.validators import ValidatedOrderRequest, validate_order_request
@@ -154,11 +152,7 @@ class OrderService:
         try:
             response = self._client.place_order(**dict(order_request))
             return self._format_response(response)
-        except (
-            TradingBotConnectivityError,
-            TradingBotRequestError,
-            TradingBotClientError,
-        ) as exc:
+        except TradingBotClientError as exc:
             self._logger.exception("Order placement failed.")
             raise OrderPlacementError(str(exc)) from exc
         except Exception as exc:  # pragma: no cover - defensive wrapper

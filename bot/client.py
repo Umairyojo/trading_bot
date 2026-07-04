@@ -91,7 +91,13 @@ class BinanceFuturesClient:
         client.FUTURES_URL = self._futures_url
         return client
 
-    def _execute(self, operation: str, func: Callable[..., T], *args: Any, **kwargs: Any) -> T:
+    def _execute(
+        self,
+        operation: str,
+        func: Callable[..., T],
+        *args: Any,
+        **kwargs: Any,
+    ) -> T:
         """Execute a Binance client call with centralized exception handling."""
 
         try:
@@ -150,7 +156,11 @@ class BinanceFuturesClient:
     def place_order(self, **order_params: Any) -> dict[str, Any]:
         """Place a futures order using the authenticated client."""
 
-        return self._execute("place order", self._client.futures_create_order, **order_params)
+        return self._execute(
+            "place order",
+            self._client.futures_create_order,
+            **order_params,
+        )
 
     def close(self) -> None:
         """Close the underlying HTTP session if supported by the client."""
